@@ -25,11 +25,23 @@ function Home() {
   }, [])
 
 
-  const handleSearch = (e) => {
-    e.preventDefault()
-    alert(searchQuery)
-    setSearchQuery("")
-  }
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if(!searchQuery.trim()) return
+    if (loading) return
+
+    setLoading(true)
+    try{
+      const searchResults = await searchMovies(searchQuery)
+      setMovies(searchResults)
+      setError(null)
+    }catch(err){
+      console.log(err)
+      setError("failed to search movies....")
+    }finally{
+      setLoading(false)
+    }
+  };
 
   return (
     <div className="home">
@@ -45,9 +57,9 @@ function Home() {
 
       {error && <div className ="error-message">{error}</div>}
 
-      {loading ? (<div className="loading">Loading</div>) : <div className="movies-grid">
+      {loading ? (<div className="loading">Loading</div>) : (<div className="movies-grid">
         {movies.map((movie) => (<MovieCard movie={movie} key={movie.id} />))}
-      </div>}
+      </div>)}
     </div>
   );
 }
