@@ -1,43 +1,56 @@
+/* ── Card shell ──────────────────────────────────── */
 .movie-card {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  background-color: #1a1a1a;
-  transition: transform 0.2s;
-  height: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  animation: fadeInUp 0.45s ease both;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
 }
 
 .movie-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), var(--shadow-glow);
+  border-color: rgba(229, 9, 20, 0.25);
 }
 
+/* ── Poster ──────────────────────────────────────── */
 .movie-poster {
   position: relative;
   aspect-ratio: 2/3;
   width: 100%;
+  overflow: hidden;
+  background: var(--bg-secondary);
 }
 
 .movie-poster img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
 }
 
+.movie-card:hover .movie-poster img {
+  transform: scale(1.07);
+}
+
+/* ── Overlay ─────────────────────────────────────── */
 .movie-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.1),
-    rgba(0, 0, 0, 0.8)
+    rgba(0, 0, 0, 0) 40%,
+    rgba(0, 0, 0, 0.92) 100%
   );
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.35s ease;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -48,77 +61,96 @@
   opacity: 1;
 }
 
+/* ── Favorite button ─────────────────────────────── */
 .favorite-btn {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  color: white;
-  font-size: 1.5rem;
-  padding: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: 0.75rem;
+  right: 0.75rem;
+  color: rgba(255,255,255,0.8);
+  font-size: 1.25rem;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all var(--transition);
+  z-index: 2;
+  cursor: pointer;
 }
 
 .favorite-btn:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background: rgba(229, 9, 20, 0.7);
+  border-color: transparent;
+  transform: scale(1.12);
 }
 
 .favorite-btn.active {
   color: #ff4757;
+  background: rgba(229, 9, 20, 0.25);
+  border-color: rgba(229, 9, 20, 0.4);
+  animation: pulseGlow 2s ease infinite;
 }
 
-.rating-select {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: none;
-  padding: 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 0.5rem;
+/* ── Rating badge (inside overlay) ──────────────── */
+.movie-rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--accent-gold);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 100px;
+  margin-bottom: 0.4rem;
+  width: fit-content;
 }
 
+/* ── Info strip ──────────────────────────────────── */
 .movie-info {
-  padding: 1rem;
-  flex: 1;
+  padding: 0.85rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.2rem;
+  flex: 1;
 }
 
 .movie-info h3 {
-  font-size: 1rem;
-  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-body);
 }
 
 .movie-info p {
-  color: #999;
-  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
 
-.user-rating {
-  color: #ffd700;
-  font-size: 0.9rem;
-  margin-top: auto;
+/* ── Shimmer placeholder ─────────────────────────── */
+.movie-card.skeleton .movie-poster {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    rgba(255,255,255,0.04) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
 }
 
 @media (max-width: 768px) {
-  .movie-card {
-    font-size: 0.9rem;
-  }
-
-  .movie-info {
-    padding: 0.75rem;
-  }
-
-  .favorite-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 1.2rem;
-  }
+  .movie-card { font-size: 0.9rem; }
+  .movie-info  { padding: 0.6rem 0.75rem; }
+  .favorite-btn { width: 32px; height: 32px; font-size: 1rem; }
 }
